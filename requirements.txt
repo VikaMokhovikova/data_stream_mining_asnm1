@@ -1,0 +1,23 @@
+# ============================================================================== 
+# Data Stream Mining - Project Dependencies # Course: Data Stream Mining (NOVA IMS) 
+# ============================================================================== 
+
+# Core Stream Learning Frameworks 
+river&gt;=0.18.0 # Primary online ML framework (or capymoa if using CapyMOA) 
+# capymoa&gt;=0.6.0 # Uncomment if using CapyMOA 
+
+# Data Manipulation &amp; Numerical Computation 
+pandas&gt;=2.0.0 
+numpy&gt;=1.24.0 
+scipy&gt;=1.10.0 
+
+# Traditional ML &amp; Evaluation Utilities 
+scikit-learn&gt;=1.2.0 
+
+# Visualisation &amp; 
+Plotting matplotlib&gt;=3.7.0 
+seaborn&gt;=0.12.0 
+
+# Weather API Data Retrieval (Open-Meteo) 
+requests&gt;=2.28.0 
+openmeteo-requests&gt;=1.1.0
