@@ -27,6 +27,18 @@
   * `matplotlib` >= 3.7.0
   * `seaborn` >= 0.12.0
 
+### Environment Setup (`uv`) 
+```bash 
+# Create virtual environment (.venv) 
+uv venv 
+
+# Activate environment source 
+.venv/bin/activate # Windows: .venv\\Scripts\\activate 
+
+# Install from requirements.txt 
+uv pip install -r requirements.txt
+```
+
 ---
 
 ## 3. Directory Layout
@@ -34,21 +46,19 @@
 ```text
 PA04_GroupYY/
 ├── README.md                         # Audit metadata & replication guide
+├── config.yaml
 ├── requirements.txt                  # Locked dependencies
 ├── src/
 │   └── practical_assignment.ipynb    # Main prequential evaluation pipeline
+│   └── collect_data.py               # Collect raw snapshots
 │   └── utils.py                      # Supporting modules
 ├── data/
-│   ├── guimaraes_raw.csv             # Raw weather stream (Guimarães)
-│   ├── viana_raw.csv                 # Raw weather stream (Viana do Castelo)
-│   └── retrieval_instructions.md     # Open-Meteo API parameters
+│   ├── guimaraes_raw.json            # Raw weather stream (Guimarães)
+│   ├── viana_do_castelo_raw.json     # Raw weather stream (Viana do Castelo)
 └── results/
     ├── metrics.csv                   # Accuracy, Macro-F1, Precision, Recall, Latency
-    ├── configurations.csv            # Frozen thresholds & model parameters
     └── figures/                      # Exported plots
 ```
-
----
 
 ## 4. Instructions to Reproduce the Main Experiment
 
