@@ -17,12 +17,12 @@ data:
 
 cities:
   - name: Guimaraes
-    latitude: 41.44
-    longitude: -8.29
+    latitude: 41.4289
+    longitude: -8.3178
 
   - name: Viana do Castelo
-    latitude: 41.69
-    longitude: -8.83
+    latitude: 41.695
+    longitude: -8.82916
 
 storage:
   raw_dir: data
