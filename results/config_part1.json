@@ -1,0 +1,94 @@
+{
+  "assignment": "PA04",
+  "business_scenario": "Textile Storage Facility",
+  "business_question": "How do humid and dry regimes differ between candidate warehouse locations?",
+  "target": "T4",
+  "target_name": "Humid vs Dry Regime",
+  "target_source": "relative_humidity_2m",
+  "target_quantile": 0.5,
+  "tau_H": 82.0,
+  "tau_H_n_observations": 17520,
+  "cities": {
+    "guimaraes": {
+      "role": "City A",
+      "name": "Guimaraes",
+      "latitude": 41.4289,
+      "longitude": -8.3178,
+      "raw_file": "data/guimaraes_raw.json"
+    },
+    "viana_do_castelo": {
+      "role": "City B",
+      "name": "Viana do Castelo",
+      "latitude": 41.695,
+      "longitude": -8.82916,
+      "raw_file": "data/viana_do_castelo_raw.json"
+    }
+  },
+  "grid_points": {
+    "guimaraes": {
+      "latitude": 41.441124,
+      "longitude": -8.287781,
+      "elevation": 170.0
+    },
+    "viana_do_castelo": {
+      "latitude": 41.722317,
+      "longitude": -8.8567505,
+      "elevation": 15.0
+    }
+  },
+  "period": [
+    "2023-01-01",
+    "2025-12-31"
+  ],
+  "hourly_variables": [
+    "temperature_2m",
+    "relative_humidity_2m",
+    "precipitation",
+    "wind_speed_10m"
+  ],
+  "timezone": "Europe/Lisbon",
+  "utc_offset_seconds": {
+    "guimaraes": 3600,
+    "viana_do_castelo": 3600
+  },
+  "warmup_hours": 8760,
+  "warmup_start": "2023-01-01 00:00:00",
+  "warmup_end": "2023-12-31 23:00:00",
+  "evaluation_start": "2024-01-01 00:00:00",
+  "evaluation_end": "2025-12-31 23:00:00",
+  "quality_rule": "flag invalid (missing or outside definitional range), keep row, skip incomplete events in replay",
+  "valid_ranges": {
+    "temperature_2m": [
+      -50.0,
+      60.0
+    ],
+    "relative_humidity_2m": [
+      0.0,
+      100.0
+    ],
+    "precipitation": [
+      0.0,
+      null
+    ],
+    "wind_speed_10m": [
+      0.0,
+      null
+    ]
+  },
+  "rows_flagged_invalid": {
+    "guimaraes": 0,
+    "viana_do_castelo": 0
+  },
+  "processed_files": {
+    "guimaraes": "data/processed/PA04_guimaraes_2023-01-01_2025-12-31.csv",
+    "viana_do_castelo": "data/processed/PA04_viana_do_castelo_2023-01-01_2025-12-31.csv"
+  },
+  "random_seed": 42,
+  "versions": {
+    "python": "3.11.14",
+    "pandas": "2.3.3",
+    "numpy": "2.4.6",
+    "matplotlib": "3.11.2"
+  },
+  "created_at_utc": "2026-10-21T17:53:09+00:00"
+}

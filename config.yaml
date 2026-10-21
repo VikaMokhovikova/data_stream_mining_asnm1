@@ -1,7 +1,20 @@
 
 project:
   name: textile_storage_stream_mining
+  assignment: PA04
   target: T4
+
+target:
+  name: Humid vs Dry Regime
+  source_variable: relative_humidity_2m   # H_t defines y_t -> never a predictor at time t
+  quantile: 0.50                          # tau_H = Q0.50(H) over the pooled warm-up (handbook, T4)
+
+experiment:
+  warmup_start: "2023-01-01"   # warm-up = first full year: tau_H estimation only, not scored
+  warmup_end: "2023-12-31"     # inclusive (last warm-up hour: 2023-12-31 23:00)
+  evaluation_start: "2024-01-01"
+  evaluation_end: "2025-12-31"
+  random_seed: 42
 
 data:
   source: open_meteo_archive
@@ -29,3 +42,6 @@ storage:
   force_download: true
   cityA_dir: data/guimaraes_raw.json
   cityB_dir: data/viana_do_castelo_raw.json
+  processed_dir: data/processed
+  results_dir: results
+  figures_dir: results/figures

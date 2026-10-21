@@ -1,0 +1,12 @@
+,Guimaraes,Viana do Castelo
+role,City A,City B
+"grid point (lat, lon)","41.441, -8.288","41.722, -8.857"
+elevation (m),170.0,15.0
+period,2023-01-01 to 2025-12-31,2023-01-01 to 2025-12-31
+hours (common timeline),26304,26304
+rows flagged invalid,0,0
+warm-up hours,8760,8760
+evaluation hours,17544,17544
+"tau_H (pooled, %)",82.0,82.0
+"humid share, warm-up",0.511,0.5
+"humid share, evaluation",0.495,0.522
