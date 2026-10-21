@@ -6,7 +6,7 @@ project:
 data:
   source: open_meteo_archive
   api_url: "https://archive-api.open-meteo.com/v1/archive"
-  start_date: "2025-01-01"
+  start_date: "2023-01-01"
   end_date: "2025-12-31"
   timezone: Europe/Lisbon
   hourly_variables:
@@ -26,4 +26,6 @@ cities:
 
 storage:
   raw_dir: data
-  force_download: false
+  force_download: true
+  cityA_dir: data/guimaraes_raw.json
+  cityB_dir: data/viana_do_castelo_raw.json
