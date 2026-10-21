@@ -39,7 +39,7 @@ cities:
 
 storage:
   raw_dir: data
-  force_download: true
+  force_download: false
   cityA_dir: data/guimaraes_raw.json
   cityB_dir: data/viana_do_castelo_raw.json
   processed_dir: data/processed
