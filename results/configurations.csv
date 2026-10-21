@@ -1,0 +1,57 @@
+parameter,value
+project.name,textile_storage_stream_mining
+project.assignment,PA04
+project.scenario,Textile Storage Facility
+project.business_question,How do humid and dry regimes differ between candidate warehouse locations?
+project.target,T4
+project.target_name,Humid vs Dry Regime
+data.source,open_meteo_archive
+data.api_url,https://archive-api.open-meteo.com/v1/archive
+data.start_date,2023-01-01
+data.end_date,2025-12-31
+data.timezone,Europe/Lisbon
+data.hourly_variables,"['temperature_2m', 'relative_humidity_2m', 'precipitation', 'wind_speed_10m']"
+storage.force_download,False
+storage.results_dir,results
+storage.figures_dir,results/figures
+storage.profiles_dir,results/profiles
+quality.valid_ranges.temperature_2m,"[-50.0, 60.0]"
+quality.valid_ranges.relative_humidity_2m,"[0.0, 100.0]"
+quality.valid_ranges.precipitation,"[0.0, None]"
+quality.valid_ranges.wind_speed_10m,"[0.0, None]"
+protocol.seed,42
+protocol.target_variable,relative_humidity_2m
+protocol.target_quantile,0.5
+protocol.warmup_months,12
+protocol.evaluation_window,500
+protocol.history_every,24
+protocol.max_eval_events,
+features.rolling_variables,['relative_humidity_2m']
+features.windows,"[6, 24]"
+features.event_window,24
+models.logistic_lr,0.05
+models.hoeffding.grace_period,50
+models.hoeffding.delta,0.001
+models.hoeffding.tau,0.1
+models.ensemble_size,5
+models.arf_lambda,6
+cities.guimaraes.key,guimaraes
+cities.guimaraes.name,Guimaraes
+cities.guimaraes.role,City A
+cities.guimaraes.latitude,41.4289
+cities.guimaraes.longitude,-8.3178
+cities.guimaraes.raw_file,data/guimaraes_raw.json
+cities.viana_do_castelo.key,viana_do_castelo
+cities.viana_do_castelo.name,Viana do Castelo
+cities.viana_do_castelo.role,City B
+cities.viana_do_castelo.latitude,41.695
+cities.viana_do_castelo.longitude,-8.82916
+cities.viana_do_castelo.raw_file,data/viana_do_castelo_raw.json
+frozen.tau_H,82.0
+frozen.warmup_hours,8760
+frozen.warmup_end,2023-12-31 23:00:00
+frozen.evaluation_start,2024-01-01 00:00:00
+version.river,0.26.1
+version.scikit-learn,1.9.1
+version.pandas,2.3.3
+version.numpy,2.5.4
