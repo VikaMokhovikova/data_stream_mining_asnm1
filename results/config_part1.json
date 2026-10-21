@@ -10,15 +10,17 @@
   "tau_H_n_observations": 17520,
   "cities": {
     "guimaraes": {
-      "role": "City A",
+      "key": "guimaraes",
       "name": "Guimaraes",
+      "role": "City A",
       "latitude": 41.4289,
       "longitude": -8.3178,
       "raw_file": "data/guimaraes_raw.json"
     },
     "viana_do_castelo": {
-      "role": "City B",
+      "key": "viana_do_castelo",
       "name": "Viana do Castelo",
+      "role": "City B",
       "latitude": 41.695,
       "longitude": -8.82916,
       "raw_file": "data/viana_do_castelo_raw.json"
@@ -51,12 +53,10 @@
     "guimaraes": 3600,
     "viana_do_castelo": 3600
   },
+  "warmup_months": 12,
   "warmup_hours": 8760,
-  "warmup_start": "2023-01-01 00:00:00",
   "warmup_end": "2023-12-31 23:00:00",
   "evaluation_start": "2024-01-01 00:00:00",
-  "evaluation_end": "2025-12-31 23:00:00",
-  "quality_rule": "flag invalid (missing or outside definitional range), keep row, skip incomplete events in replay",
   "valid_ranges": {
     "temperature_2m": [
       -50.0,
@@ -79,16 +79,13 @@
     "guimaraes": 0,
     "viana_do_castelo": 0
   },
-  "processed_files": {
-    "guimaraes": "data/processed/PA04_guimaraes_2023-01-01_2025-12-31.csv",
-    "viana_do_castelo": "data/processed/PA04_viana_do_castelo_2023-01-01_2025-12-31.csv"
-  },
   "random_seed": 42,
   "versions": {
-    "python": "3.11.14",
     "pandas": "2.3.3",
-    "numpy": "2.4.6",
+    "numpy": "2.5.4",
+    "river": "0.26.1",
+    "scikit-learn": "1.9.1",
     "matplotlib": "3.11.2"
   },
-  "created_at_utc": "2026-10-21T18:04:03+00:00"
+  "created_at_utc": "2026-10-21T21:31:54+00:00"
 }

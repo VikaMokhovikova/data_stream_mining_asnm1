@@ -1,20 +1,13 @@
+# Single source of truth for the whole project (src/ modules and notebooks/).
+# Every setting is defined once and applies identically to both cities.
 
 project:
   name: textile_storage_stream_mining
   assignment: PA04
+  scenario: Textile Storage Facility
+  business_question: "How do humid and dry regimes differ between candidate warehouse locations?"
   target: T4
-
-target:
-  name: Humid vs Dry Regime
-  source_variable: relative_humidity_2m   # H_t defines y_t -> never a predictor at time t
-  quantile: 0.50                          # tau_H = Q0.50(H) over the pooled warm-up (handbook, T4)
-
-experiment:
-  warmup_start: "2023-01-01"   # warm-up = first full year: tau_H estimation only, not scored
-  warmup_end: "2023-12-31"     # inclusive (last warm-up hour: 2023-12-31 23:00)
-  evaluation_start: "2024-01-01"
-  evaluation_end: "2025-12-31"
-  random_seed: 42
+  target_name: Humid vs Dry Regime
 
 data:
   source: open_meteo_archive
@@ -28,20 +21,54 @@ data:
     - precipitation
     - wind_speed_10m
 
-cities:
-  - name: Guimaraes
+cities:                                   # City A first, City B second
+  - key: guimaraes
+    name: Guimaraes
+    role: City A
     latitude: 41.4289
     longitude: -8.3178
+    raw_file: data/guimaraes_raw.json
 
-  - name: Viana do Castelo
+  - key: viana_do_castelo
+    name: Viana do Castelo
+    role: City B
     latitude: 41.695
     longitude: -8.82916
+    raw_file: data/viana_do_castelo_raw.json
 
 storage:
-  raw_dir: data
-  force_download: false
-  cityA_dir: data/guimaraes_raw.json
-  cityB_dir: data/viana_do_castelo_raw.json
-  processed_dir: data/processed
+  force_download: false                   # true = re-download the raw snapshots even if they exist
   results_dir: results
   figures_dir: results/figures
+  profiles_dir: results/profiles
+
+quality:
+  valid_ranges:                           # definitional limits, NOT outlier limits (extreme != erroneous)
+    temperature_2m: [-50.0, 60.0]
+    relative_humidity_2m: [0.0, 100.0]
+    precipitation: [0.0, null]
+    wind_speed_10m: [0.0, null]
+
+protocol:
+  seed: 42
+  target_variable: relative_humidity_2m   # variable that defines T4 (never a predictor at time t)
+  target_quantile: 0.50                   # tau_H = Q0.50 of pooled warm-up humidity
+  warmup_months: 12                       # 12 = one full annual cycle (2023)
+  evaluation_window: 500                  # "recent performance" window, in events
+  history_every: 24                       # keep one history row every N evaluated events
+  max_eval_events: null                   # e.g. 500 for a quick smoke test; null = all
+
+features:
+  rolling_variables:                      # variables used for delta / rolling mean / std
+    - relative_humidity_2m
+  windows: [6, 24]                        # rolling window sizes in hours (end at t-1)
+  event_window: 24                        # humid hours counted over the previous N hours
+
+models:
+  logistic_lr: 0.05                       # SGD learning rate (as in Challenge 05)
+  hoeffding:
+    grace_period: 50
+    delta: 0.001
+    tau: 0.10
+  ensemble_size: 5                        # members of Online Bagging and ARF
+  arf_lambda: 6

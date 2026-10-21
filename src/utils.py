@@ -1,14 +1,26 @@
-import yaml
+"""Generic helpers with no project logic: paths, config, JSON/CSV I/O, HTTP download, versions."""
+import csv
 import json
+from importlib import metadata
 from pathlib import Path
+
 import requests
+import yaml
 
 SRC_DIR = Path(__file__).resolve().parent          # .../data_stream_mining_asnm1/src
 ROOT = SRC_DIR.parent                              # .../data_stream_mining_asnm1
 
+
 def load_config(path: str = "config.yaml") -> dict:
     with open(ROOT / path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def output_dir(cfg: dict, name: str) -> Path:
+    """Absolute path of a `storage` folder from config.yaml (e.g. "figures_dir"), created if missing."""
+    path = ROOT / cfg["storage"][name]
+    path.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def download_weather(api_url, city, start_date, end_date, variables, timezone):
@@ -32,27 +44,31 @@ def download_weather(api_url, city, start_date, end_date, variables, timezone):
     return payload
 
 
-def save_raw_snapshot(payload, path):
+def save_json(payload, path) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-
     with path.open("w", encoding="utf-8") as file:
-        json.dump(payload, file, ensure_ascii=False, indent=2)
+        json.dump(payload, file, ensure_ascii=False, indent=2, default=str)
 
 
-def load_raw_snapshot(path):
+def load_json(path):
     with Path(path).open("r", encoding="utf-8") as file:
         return json.load(file)
 
 
-def load_json_files(path: str) -> dict:
-    """Load JSON from a file, or every *.json file in a folder.
+def package_version(name: str) -> str:
+    try:
+        return metadata.version(name)
+    except metadata.PackageNotFoundError:
+        return "not installed"
 
-    Returns {file_name_without_extension: parsed_json}.
-    The path is relative to the project root, as in config.yaml.
-    """
-    p = ROOT / path
-    if not p.exists():
-        raise FileNotFoundError(f"Path not found: {p}")
-    files = sorted(p.glob("*.json")) if p.is_dir() else [p]
-    return {f.stem: json.loads(Path(f).read_text(encoding="utf-8")) for f in files}
+
+def save_configuration(rows: dict, path) -> None:
+    """Write {parameter: value} to a 2-column CSV (results/configurations.csv)."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["parameter", "value"])
+        for key, value in rows.items():
+            writer.writerow([key, value])
