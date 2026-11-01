@@ -54,6 +54,7 @@ def make_streams(prepared: dict, cfg: dict) -> dict:
 
     - Rows without enough history (the first max(windows) rows) are dropped, identically for A and B.
     - One MinMaxScaler per representation is fitted on the pooled WARM-UP rows only, then frozen.
+      Raises if a row used for the fit is not strictly before the evaluation start.
     """
     n_warm = prepared["n_warm"]
     tables = {}
@@ -65,7 +66,9 @@ def make_streams(prepared: dict, cfg: dict) -> dict:
     streams = {city: {} for city in tables}
     for rep in ("A", "B"):
         warm_rows = pd.concat([t[rep][t["valid"] & (t[rep].index < n_warm)] for t in tables.values()])
-        scaler = MinMaxScaler(feature_range=(0.0, 1.0), clip=True).fit(warm_rows)
+        if max(t["ts"][t["valid"] & (t[rep].index < n_warm)].max() for t in tables.values()) >= prepared["evaluation_start"]:
+            raise ValueError("The scaler must be fitted on warm-up rows only.")
+        scaler =MinMaxScaler(feature_range=(0.0, 1.0), clip=True).fit(warm_rows)
         for city, t in tables.items():
             streams[city][rep] = {
                 "warm": _events(t, rep, scaler, t["valid"] & (t[rep].index < n_warm)),
