@@ -30,7 +30,7 @@ The project is built on four principles:
 
 * **One configuration.** Every setting lives in `config.yaml`: period, cities, warm-up, quantile, quality ranges, feature windows and model hyper-parameters. Nothing is set by hand in a notebook, so both cities are always treated identically (Ch. 3.1).
 * **One implementation of the protocol.** All logic is in `src/`. `data.prepare_frames(cfg)` is the only place that loads the data, defines the warm-up and computes τ_H, and every notebook calls it, so τ_H cannot diverge between notebooks.
-* **Thin notebooks.** Notebooks call `src/` functions and hold what is ours to write: interpretation (📝 *For the report* cells) and individual experiments.
+* **Thin notebooks.** Notebooks call `src/` functions and hold what is ours to write: interpretation and individual experiments.
 * **No intermediate data files.** Collect once → save raw → rebuild the clean streams in memory on every run (about a second) → replay as a stream. No processed copy is stored, so nothing can go stale. Traceability comes from the raw snapshots, `config.yaml` and `results/config_part1.json`.
 
 ### Pipeline
@@ -80,7 +80,6 @@ Steps 2a and 2b are independent and can be done in parallel. Step 3 needs both.
 2. **Individual experiments use a copy of the config.** In each city notebook: `my_cfg = copy.deepcopy(cfg)`. Experiment results are never saved with `save_results`, which is reserved for the official run.
 3. **A protocol change is a joint decision.** If an experiment shows a clearly better setting, change `config.yaml` together, then re-run `00`, `01`, `02` and `03`.
 4. **Changes to `src/` are shared code.** Agree on them, because they change both cities' results.
-5. **📝 cells are written by the students themselves** (AI policy, Ch. 16).
 
 ---
 
