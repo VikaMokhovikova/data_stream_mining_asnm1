@@ -1,6 +1,6 @@
 # Dataset: hourly weather streams for Guimarães and Viana do Castelo
 
-Raw input of PA04, by Khadija Belhamra (20230007, Guimarães) and Victoriya Yurevna (20230796, Viana do Castelo).
+Raw input of PA04, by Khadija Belhamra (20230007, Guimarães) and Victoriya Mokhovikova (20230796, Viana do Castelo).
 
 * **Business context:** textile storage facility (humid vs. dry regimes)
 * **Locations:** Guimarães vs Viana do Castelo
@@ -26,7 +26,13 @@ The two files are **snapshots**: they are collected once, never modified, and re
 |---|---|
 | `guimaraes_raw.json` | City A, raw API response (unchanged) |
 | `viana_do_castelo_raw.json` | City B, raw API response (unchanged) |
-| `<city>_raw.provenance.json` | Written only when a snapshot is (re-)downloaded: request parameters and retrieval time (UTC) |
+
+The snapshots used for every reported result were retrieved no later than 2026-10-21, the date they were committed. The exact retrieval time was not recorded. Their SHA-256 checksums are:
+
+| File | SHA-256 |
+|---|---|
+| `guimaraes_raw.json` | `08e1a925ed6f3d1b00f5a7a9e685736bafa9cfc790a3d717bdfa0f772a2e29b9` |
+| `viana_do_castelo_raw.json` | `869cb6a1dbcc5780896732c1accfc9919bada2894149eb3e9b8b6e0c9098918d` |
 
 No processed copy is stored. The clean streams are rebuilt in memory from these snapshots by `prepare_frames(cfg)` on every run.
 

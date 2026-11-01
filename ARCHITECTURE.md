@@ -68,12 +68,12 @@ data.prepare_frames(cfg) ──────────────────�
 
 | Function | Guarantee |
 |---|---|
-| `data.get_snapshot` | Raw JSON is downloaded at most once and never modified. It is downloaded only if missing or `storage.force_download: true`, and a provenance file is written next to it. |
+| `data.get_snapshot` | Raw JSON is downloaded at most once and never modified. It is downloaded only if missing or `storage.force_download: true`. |
 | `data.prepare_frames` | Both cities share exactly the same timestamps. Invalid values are flagged, never deleted. τ_H is computed here and nowhere else, from pooled warm-up rows flagged `ok`. |
 | `data.protocol_checks` | Raises if any temporal-alignment check fails (order, identical timelines and warm-up, τ_H from warm-up only, target definition). |
 | `features.build_features` | Every feature for hour t uses rows ≤ t−1: `shift(1)` is applied before any rolling window. |
 | `features.check_no_leakage` | Raises if corrupting the future changes past features, or if corrupting the past does not change them (positive control). |
-| `features.make_streams` | The same rows are kept for A and B. One scaler per representation is fitted on the pooled warm-up of both cities, then frozen. |
+| `features.make_streams` | The same rows are kept for A and B. One scaler per representation is fitted on the pooled warm-up of both cities, then frozen. Raises if a row used for the fit is not before the evaluation start. |
 | `models.make_models` | Returns **fresh** instances on every call, so no state is shared between runs. |
 | `evaluate.run_prequential` | Learns on the warm-up without scoring, then strictly PREDICT → EVALUATE → LEARN on each evaluation event. |
 | `evaluate.save_results` / `load_results` | One pair of files per city; the comparison reads both cities in `config.yaml` order and raises if one is missing. |

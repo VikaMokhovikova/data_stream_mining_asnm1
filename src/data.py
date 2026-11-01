@@ -17,7 +17,7 @@ from utils import ROOT, download_weather, load_json, output_dir, package_version
 # --- 1. Raw snapshots ----------------------------------------------------------------------
 
 def get_snapshot(city: dict, cfg: dict) -> dict:
-    """Reuse the raw JSON snapshot of `city`, or download it once (plus a provenance file)."""
+    """Reuse the raw JSON snapshot of `city`, or download it once."""
     path = ROOT / city["raw_file"]
     if path.exists() and not cfg["storage"]["force_download"]:
         return load_json(path)
@@ -26,16 +26,6 @@ def get_snapshot(city: dict, cfg: dict) -> dict:
     payload = download_weather(d["api_url"], city, d["start_date"], d["end_date"],
                                d["hourly_variables"], d["timezone"])
     save_json(payload, path)
-    save_json({
-        "provider": "Open-Meteo Historical Weather API",
-        "endpoint": d["api_url"],
-        "city": city["name"],
-        "requested": {"latitude": city["latitude"], "longitude": city["longitude"],
-                      "start_date": d["start_date"], "end_date": d["end_date"],
-                      "hourly": d["hourly_variables"], "timezone": d["timezone"]},
-        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "raw_file": path.name,
-    }, path.with_suffix(".provenance.json"))
     return payload
 
 
@@ -197,7 +187,10 @@ def protocol_checks(prepared: dict, cfg: dict) -> pd.Series:
         "identical timestamps in both cities": a["timestamp"].equals(b["timestamp"]),
         "identical warm-up mask in both cities": a["phase"].equals(b["phase"]),
         "warm-up ends before evaluation starts": prepared["warmup_end"] < prepared["evaluation_start"],
-        "tau_H uses only warm-up rows": prepared["n_pooled"] <= 2 * n_warm,
+        # Value comparison alone cannot prove this: tau_H also equals 82 over all rows. Corrupt evaluation instead.
+        "tau_H uses only warm-up rows": np.isclose(frozen_threshold(
+            [f.assign(**{var: f[var].where(f.index < n_warm, 0.0)}) for f in frames],
+            n_warm, var, p["target_quantile"]), tau),
         "tau_H reproducible from warm-up data": np.isclose(
             frozen_threshold(frames, n_warm, var, p["target_quantile"]), tau),
         "y == 1  <=>  H_t >= tau_H": all(

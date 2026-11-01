@@ -9,7 +9,7 @@
 |---|---|
 | **Assignment Code** | PA04 |
 | **Student A (primary City A)** | Khadija Belhamra, 20230007: Guimarães |
-| **Student B (primary City B)** | Victoriya Yurevna, 20230796: Viana do Castelo |
+| **Student B (primary City B)** | Victoriya Mokhovikova, 20230796: Viana do Castelo |
 | **Business context** | Textile storage facility (humid vs. dry regimes) |
 | **Locations** | Guimarães vs Viana do Castelo |
 | **Question** | How do humid and dry regimes differ between candidate warehouse locations? |
@@ -72,12 +72,12 @@ The workflow mirrors the assignment: a **shared** protocol, an **individual** ci
 
 Steps 2a and 2b are independent and can be done in parallel. Step 3 needs both.
 
-**Current state:** step 1 is done (`00_shared_protocol` has been run, and its records and `shared_*` figures are in `results/`). Notebooks 01 and 02 are **starter notebooks**: a setup cell that loads the shared protocol, plus a guide to the modules with ready-to-copy examples and the checklist of what the assignment expects. The analysis is ours to write. `03_shared_comparison` is a draft, not yet run: it needs both cities' saved results.
+**Current state:** all four notebooks have been run, and their records, tables and figures are in `results/`.
 
 ### Rules that keep the two cities comparable
 
 1. **Never set a protocol value in a notebook.** Period, warm-up, τ_H, features and hyper-parameters come from `config.yaml` through `src/`.
-2. **Individual experiments use a copy of the config.** In each city notebook: `my_cfg = copy.deepcopy(cfg)` (see the guide, section 4). Experiment results are never saved with `save_results`, which is reserved for the official run.
+2. **Individual experiments use a copy of the config.** In each city notebook: `my_cfg = copy.deepcopy(cfg)`. Experiment results are never saved with `save_results`, which is reserved for the official run.
 3. **A protocol change is a joint decision.** If an experiment shows a clearly better setting, change `config.yaml` together, then re-run `00`, `01`, `02` and `03`.
 4. **Changes to `src/` are shared code.** Agree on them, because they change both cities' results.
 5. **📝 cells are written by the students themselves** (AI policy, Ch. 16).
@@ -87,11 +87,13 @@ Steps 2a and 2b are independent and can be done in parallel. Step 3 needs both.
 ## 4. Directory Layout and What Each File Is For
 
 ```text
-PA04/
+PA04_GroupYY/
 ├── README.md
+├── ARCHITECTURE.md
 ├── config.yaml
 ├── requirements.txt
 ├── .python-version
+├── config_vika/
 ├── data/
 │   ├── README.md
 │   ├── guimaraes_raw.json
@@ -127,14 +129,16 @@ PA04/
 | `requirements.txt` | Python dependencies (see section 5) |
 | `.python-version` | Python version used by `uv venv` (3.12) |
 | `data/*_raw.json` | Raw Open-Meteo snapshots, one per city, never modified |
-| `data/README.md` | Dataset description: source, grid points, variables, units, quality, timestamps, limitations |
+| `data/README.md` | Dataset description: source, snapshot checksums, grid points, variables, units, quality, timestamps, limitations |
+| `config_vika/` | Configurations and results of the individual experiments in notebook 02. Not part of the official protocol (see `config_vika/README.md`) |
+| `ARCHITECTURE.md` | How the code is organised, what each step guarantees, and where to make a change |
 
 ### Supporting modules (`src/`)
 
 | Module | Responsibility | Main functions |
 |---|---|---|
 | `utils.py` | Generic helpers with no project logic | `load_config`, `output_dir`, `download_weather`, `save_json` / `load_json`, `package_version`, `save_configuration` |
-| `data.py` | **The shared protocol** (steps 1–3): raw snapshots → clean tables → warm-up → frozen τ_H → target | `get_snapshot` (reuse or download once + provenance), `to_frame`, `flag_invalid`, `quality_report`, `chronology_report`, `warmup_size`, `frozen_threshold`, `add_target`, **`prepare_frames`** (entry point), `protocol_checks`, `stream_summary`, `save_protocol_records` |
+| `data.py` | **The shared protocol** (steps 1–3): raw snapshots → clean tables → warm-up → frozen τ_H → target | `get_snapshot` (reuse or download once), `to_frame`, `flag_invalid`, `quality_report`, `chronology_report`, `warmup_size`, `frozen_threshold`, `add_target`, **`prepare_frames`** (entry point), `protocol_checks`, `stream_summary`, `save_protocol_records` |
 | `features.py` | Past-only features and replay events (steps 4–5) | `build_features` (Representations A and B, every window ends at t−1), `check_no_leakage` (corrupts the future and asserts that the features do not change), `make_streams` (scaler fitted on the pooled warm-up, River-style events) |
 | `models.py` | The five mandatory River learners, always fresh instances | `make_models`: Gaussian NB, Online Logistic Regression (SGD), Hoeffding Tree, Online Bagging, Adaptive Random Forest |
 | `evaluate.py` | Prequential evaluation (step 7) and result files | `run_prequential` (PREDICT → EVALUATE → LEARN, cumulative and sliding-window metrics, latency), `evaluate_models` (all models × representations on one city), `save_results`, `load_results` |
@@ -146,9 +150,9 @@ PA04/
 | Notebook | Owner | Content |
 |---|---|---|
 | `00_shared_protocol.ipynb` | Both | Assignment card, raw snapshots and grid points, chronology, data quality, warm-up, τ_H, target, class distribution, protocol checks + leakage test, saved records |
-| `01_cityA_guimaraes.ipynb` | Khadija Belhamra | Starter: setup cell (`CITY_KEY = "guimaraes"`) + guide to `profiling`, `plots`, `features` / `models` / `evaluate`, individual experiments, and the assignment checklist (Ch. 9 items 1–7, ≥ 2 original analyses, prequential experiment, interpretation) |
-| `02_cityB_viana_do_castelo.ipynb` | Victoriya Yurevna | The same starter for Viana do Castelo (`CITY_KEY = "viana_do_castelo"`) |
-| `03_shared_comparison.ipynb` | Both | Draft: City A vs City B side by side, model comparison against persistence, performance over time, cost, joint business answer and technical recommendation. Run it once both city notebooks have saved their results |
+| `01_cityA_guimaraes.ipynb` | Khadija Belhamra | Stream profile of Guimarães (Ch. 9 items 1–7), original analyses, business interpretation, official prequential run, individual experiments, summary for the report |
+| `02_cityB_viana_do_castelo.ipynb` | Victoriya Mokhovikova | The same analysis for Viana do Castelo |
+| `03_shared_comparison.ipynb` | Both | City A vs City B side by side, model comparison against persistence, performance over time, cost, joint business and technical recommendations, limitations. Run it after both city notebooks, because it reads their saved results |
 
 ### Results (`results/`)
 
@@ -169,7 +173,7 @@ PA04/
 | | |
 |---|---|
 | **Python** | 3.12, pinned in `.python-version` so we both use the same version. The project was run end to end with 3.12. `river` and `pandas` also install on 3.13–3.15, but those versions were not run end to end |
-| **Packages** | `requirements.txt`: `PyYAML`, `requests`, `pandas` (< 3), `numpy`, `river`, `scikit-learn`, `matplotlib`, `ipykernel`, `nbconvert` |
+| **Packages** | `requirements.txt` pins the exact tested versions of `PyYAML`, `requests`, `pandas`, `numpy`, `river`, `scikit-learn`, `matplotlib`, `ipykernel`, `nbconvert` |
 | **Package manager** | [`uv`](https://docs.astral.sh/uv/) (recommended), or plain `pip` |
 | **Tested with** | Python 3.12.12, river 0.26.1, scikit-learn 1.9.1, pandas 2.3.3, numpy 2.5.4, matplotlib 3.11.2 (macOS, Apple Silicon) |
 
@@ -207,8 +211,8 @@ pip install -r requirements.txt
 
 ### Step 1: Extract the audit directory
 ```bash
-unzip PA04_Audit.zip
-cd PA04/
+unzip PA04_GroupYY_Audit.zip
+cd PA04_GroupYY/
 ```
 
 ### Step 2: Set up the environment
