@@ -1,7 +1,0 @@
-model,official_B,E1_temperature_context,E2_windows_3_12_48,E3_hour_of_day
-Gaussian Naive Bayes,0.8606,0.8548,0.8674,0.8671
-Online Logistic Regression,0.8631,0.8811,0.8772,0.8731
-Hoeffding Tree,0.9139,0.913,0.9141,0.9134
-Online Bagging,0.9155,0.9198,0.9195,0.9201
-Adaptive Random Forest,0.9127,0.9123,0.9105,0.9137
-persistence y_t-1,0.914,0.914,0.914,0.914

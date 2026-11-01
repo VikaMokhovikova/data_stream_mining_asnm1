@@ -9,7 +9,7 @@
 |---|---|
 | **Assignment Code** | PA04 |
 | **Student A (primary City A)** | Khadija Belhamra, 20230007: Guimarães |
-| **Student B (primary City B)** | Victoriya Mokhovikova, 20230796: Viana do Castelo |
+| **Student B (primary City B)** | Victoriya Yurevna, 20230796: Viana do Castelo |
 | **Business context** | Textile storage facility (humid vs. dry regimes) |
 | **Locations** | Guimarães vs Viana do Castelo |
 | **Question** | How do humid and dry regimes differ between candidate warehouse locations? |
@@ -87,13 +87,11 @@ Steps 2a and 2b are independent and can be done in parallel. Step 3 needs both.
 ## 4. Directory Layout and What Each File Is For
 
 ```text
-PA04_GroupYY/
+PA04_Group04/
 ├── README.md
-├── ARCHITECTURE.md
 ├── config.yaml
 ├── requirements.txt
 ├── .python-version
-├── config_vika/
 ├── data/
 │   ├── README.md
 │   ├── guimaraes_raw.json
@@ -130,8 +128,6 @@ PA04_GroupYY/
 | `.python-version` | Python version used by `uv venv` (3.12) |
 | `data/*_raw.json` | Raw Open-Meteo snapshots, one per city, never modified |
 | `data/README.md` | Dataset description: source, snapshot checksums, grid points, variables, units, quality, timestamps, limitations |
-| `config_vika/` | Configurations and results of the individual experiments in notebook 02. Not part of the official protocol (see `config_vika/README.md`) |
-| `ARCHITECTURE.md` | How the code is organised, what each step guarantees, and where to make a change |
 
 ### Supporting modules (`src/`)
 
@@ -151,7 +147,7 @@ PA04_GroupYY/
 |---|---|---|
 | `00_shared_protocol.ipynb` | Both | Assignment card, raw snapshots and grid points, chronology, data quality, warm-up, τ_H, target, class distribution, protocol checks + leakage test, saved records |
 | `01_cityA_guimaraes.ipynb` | Khadija Belhamra | Stream profile of Guimarães (Ch. 9 items 1–7), original analyses, business interpretation, official prequential run, individual experiments, summary for the report |
-| `02_cityB_viana_do_castelo.ipynb` | Victoriya Mokhovikova | The same analysis for Viana do Castelo |
+| `02_cityB_viana_do_castelo.ipynb` | Victoriya Yurevna | The same analysis for Viana do Castelo |
 | `03_shared_comparison.ipynb` | Both | City A vs City B side by side, model comparison against persistence, performance over time, cost, joint business and technical recommendations, limitations. Run it after both city notebooks, because it reads their saved results |
 
 ### Results (`results/`)
@@ -211,8 +207,8 @@ pip install -r requirements.txt
 
 ### Step 1: Extract the audit directory
 ```bash
-unzip PA04_GroupYY_Audit.zip
-cd PA04_GroupYY/
+unzip PA04_Group04_Audit.zip
+cd PA04_Group04/
 ```
 
 ### Step 2: Set up the environment
@@ -228,7 +224,11 @@ Or non-interactively, from the project root:
 jupyter nbconvert --to notebook --execute --inplace notebooks/0*.ipynb
 ```
 
-Each notebook finds the project root and puts `src/` on the path by itself, whatever folder Jupyter is started from. The raw snapshots are reused. They are downloaded again only if missing or if `storage.force_download: true`. For a quick smoke test, set `protocol.max_eval_events: 500` in `config.yaml`, and set it back to `null` for the official results.
+Each notebook finds the project root and puts `src/` on the path by itself, whatever folder Jupyter is started from. The raw snapshots are reused. They are downloaded again only if missing or if `storage.force_download: true`.
+
+**Keep `storage.force_download: false`.** The results are based on the snapshots in `data/`, which use a fixed UTC+1 clock. A fresh Open-Meteo download now arrives on a UTC clock, which shifts every row by one hour and changes the results.
+
+**Re-running 01 and 02** reproduces every quality metric exactly, but the prediction and update times depend on the machine and on the run. It overwrites the timing values in `results/metrics_<city>.csv`, which notebook 03 reads. The timing values in the submitted files are the ones to report, so re-run 03 after 01 and 02 if you regenerate them. For a quick smoke test, set `protocol.max_eval_events: 500` in `config.yaml`, and set it back to `null` for the official results.
 
 ---
 

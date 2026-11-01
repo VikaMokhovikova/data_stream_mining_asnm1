@@ -1,6 +1,6 @@
 # Dataset: hourly weather streams for Guimarães and Viana do Castelo
 
-Raw input of PA04, by Khadija Belhamra (20230007, Guimarães) and Victoriya Mokhovikova (20230796, Viana do Castelo).
+Raw input of PA04, by Khadija Belhamra (20230007, Guimarães) and Victoriya Yurevna (20230796, Viana do Castelo).
 
 * **Business context:** textile storage facility (humid vs. dry regimes)
 * **Locations:** Guimarães vs Viana do Castelo
@@ -92,6 +92,8 @@ Definitional ranges (`config.yaml → quality.valid_ranges`): temperature −50 
 ## Timestamps
 
 The `time` values form a perfectly regular hourly sequence (26 304 = 3 × 365 × 24 + 24 for the 2024 leap day). The March gap and October duplicate that a daylight-saving local clock would produce are absent. The API therefore returned a **fixed-offset** clock (`utc_offset_seconds` in the file), and `src/data.py` also derives `timestamp_utc`. Hour-of-day analyses convert `timestamp_utc` to the true `Europe/Lisbon` clock (with summer time).
+
+These snapshots use a fixed UTC+1 clock (`utc_offset_seconds: 3600`). A fresh download from the API now returns UTC (`utc_offset_seconds: 0`), with temperature and humidity identical but one hour earlier on the timeline. To reproduce the results, keep the included snapshots and `storage.force_download: false`.
 
 ## How the data is used
 
