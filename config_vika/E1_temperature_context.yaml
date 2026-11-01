@@ -1,0 +1,81 @@
+# Individual experiment E1_temperature_context - Victoriya Mokhovikova (City B: Viana do Castelo)
+# NOT the official configuration: official results use ../config.yaml.
+# Change relative to config.yaml (one factor only, Representation B):
+#   features.rolling_variables: [relative_humidity_2m] -> [relative_humidity_2m, temperature_2m]  (adds delta, 6 h / 24 h rolling mean and std of temperature to Representation B)
+# Run in notebooks/02_cityB_viana_do_castelo.ipynb, Section 11.2; results NOT saved with save_results.
+
+project:
+  name: textile_storage_stream_mining
+  assignment: PA04
+  scenario: Textile Storage Facility
+  business_question: How do humid and dry regimes differ between candidate warehouse
+    locations?
+  target: T4
+  target_name: Humid vs Dry Regime
+data:
+  source: open_meteo_archive
+  api_url: https://archive-api.open-meteo.com/v1/archive
+  start_date: '2023-01-01'
+  end_date: '2025-12-31'
+  timezone: Europe/Lisbon
+  hourly_variables:
+  - temperature_2m
+  - relative_humidity_2m
+  - precipitation
+  - wind_speed_10m
+cities:
+- key: guimaraes
+  name: Guimaraes
+  role: City A
+  latitude: 41.4289
+  longitude: -8.3178
+  raw_file: data/guimaraes_raw.json
+- key: viana_do_castelo
+  name: Viana do Castelo
+  role: City B
+  latitude: 41.695
+  longitude: -8.82916
+  raw_file: data/viana_do_castelo_raw.json
+storage:
+  force_download: false
+  results_dir: results
+  figures_dir: results/figures
+  profiles_dir: results/profiles
+quality:
+  valid_ranges:
+    temperature_2m:
+    - -50.0
+    - 60.0
+    relative_humidity_2m:
+    - 0.0
+    - 100.0
+    precipitation:
+    - 0.0
+    - null
+    wind_speed_10m:
+    - 0.0
+    - null
+protocol:
+  seed: 42
+  target_variable: relative_humidity_2m
+  target_quantile: 0.5
+  warmup_months: 12
+  evaluation_window: 500
+  history_every: 24
+  max_eval_events: null
+features:
+  rolling_variables:
+  - relative_humidity_2m
+  - temperature_2m
+  windows:
+  - 6
+  - 24
+  event_window: 24
+models:
+  logistic_lr: 0.05
+  hoeffding:
+    grace_period: 50
+    delta: 0.001
+    tau: 0.1
+  ensemble_size: 5
+  arf_lambda: 6
